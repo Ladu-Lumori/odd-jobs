@@ -15,10 +15,10 @@ import { Button,
 } from '@mui/material';
 import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon';
 //import { InboxIcon, MailIcon  } from '@mui/icons-material';
-import Dash from './Dash';
+import Dash from '../screens/Dash';
 import Jobs from './Jobs';
-import Settings from './Settings';
-import Lounge from './Lounge';
+import Settings from '../screens/Settings';
+import Lounge from '../screens/Lounge';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';

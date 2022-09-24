@@ -14,13 +14,13 @@ import { Button,
   Tabs,
   Typography
 } from '@mui/material';
-import Messages from './Messages';
-import Job from './Job'
+import Messages from '../components/Messages';
+import Job from '../components/Job'
 
 export default function Lounge(){
   return(
     <Stack direction="row">
-    <Stack container gap={1} >
+    <Stack>
     <Typography variant="h3" gutterBottom>
         Taken Jobs
     </Typography>
