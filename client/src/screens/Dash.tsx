@@ -18,11 +18,12 @@ import { Button,
   Chip
 } from '@mui/material';
 
-export default function Dash(){
+export default function Dash({ user }){ 
+  console.log(user);
   return(
     <Stack>
     <Typography variant="h3" gutterBottom>
-        Your Dashboard. 
+        {user.email}
     </Typography>
     <Stack direction="row" gap={1}>
       <Card sx={{ bgcolor: '#7c6ea7', height: 150}}>

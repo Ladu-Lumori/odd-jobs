@@ -66,7 +66,7 @@ export default function Nav(props){
       <Tab label="Settings" value="4"/>
     </TabList>
     </HideOnScroll>
-      <TabPanel value="1"><Dash/></TabPanel>
+      <TabPanel value="1"><Dash user={props?.user}/></TabPanel>
       <TabPanel value="2"><Jobs click={handleClick}/></TabPanel>
       <TabPanel value="3"><Lounge/></TabPanel>
       <TabPanel value="4"><Settings/></TabPanel>

@@ -1,14 +1,40 @@
-import * as React from 'react';
+import { useState, useEffect } from "react";
+import { supabase } from "./lib/api";
 import { Button, Stack } from '@mui/material';
 import Nav from './components/Nav';
 import Header from './components/Header';
 import './index.css';
+import Auth from "./components/Auth";
 
 export default function App() {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const session = supabase.auth.session();
+    setUser(session?.user ?? null);
+
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        const currentUser = session?.user;
+        setUser(currentUser ?? null);
+      }
+    );
+
+    return () => {
+      authListener?.unsubscribe();
+    };
+  }, [user]);
+
   return (
-    <Stack>
-    <Header/>
-    <Nav/>
-    </Stack>
+    <>
+      {!user ? <Auth /> : (
+        <>
+          <Stack>
+            <Header user={user} />
+            <Nav user={user}/>
+          </Stack>
+        </>
+      )}
+    </>
   );
 }
