@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Button, Stack } from '@mui/material';
-import Nav from './Nav';
-import Header from './Header';
-import './style.css';
+import Nav from './components/Nav';
+import Header from './components/Header';
+import './index.css';
 
 export default function App() {
   return (

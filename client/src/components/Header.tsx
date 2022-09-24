@@ -88,7 +88,7 @@ export default function Header(){
     return (
       <Stack>
       <Box sx={{ flexGrow: 1 }}>
-      <AppBar sx={{justifyContent: 'center', height: 80}} height= {80} position="sticky">
+      <AppBar sx={{bgcolor: '#7c6ea7', justifyContent: 'center', height: 80}} position="sticky">
         <Toolbar variant="dense">
           <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }}>
           <GrassIcon color="disabled" fontSize="large"/>
