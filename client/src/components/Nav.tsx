@@ -59,7 +59,7 @@ export default function Nav(props){
       <CssBaseline />
     <TabContext value={value}>
     <HideOnScroll {...props}>
-    <TabList position="fixed" onChange={handleChange} aria-label="lab API tabs example" centered>
+    <TabList onChange={handleChange} aria-label="lab API tabs example" centered>
       <Tab label="Dashboard" value="1"/>
       <Tab label="Jobs" value="2"/>
       <Tab label="Lounge" value="3"/>
