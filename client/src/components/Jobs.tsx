@@ -14,12 +14,11 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 
+export type JobsProps = {
 
-export default function Jobs(props) {
-  const User = 'Grace John'
-  const Ava = 'GJ'
-  const Desc = 'Feed my cat and water my plants.'
-  const Cash = '20.00'
+}
+
+export default function Jobs(props: JobsProps) {
   const [open, setOpen] = useState(false);
   const [jobs, setJobs] = useState([]);
   const [jobTitle, setJobTitle] = useState("");
@@ -115,7 +114,7 @@ export default function Jobs(props) {
       </Box>
       <Typography variant="h5">Recent jobs</Typography>
       {
-        jobs?.map(job => (<Job click={props.click} job={job} name={User} cash={Cash} description={Desc} avatar={Ava} />))
+        jobs?.map(job => (<Job click={props.click} job={job} />))
       }
     </Stack>
   );

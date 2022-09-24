@@ -30,7 +30,7 @@ export default function App() {
       {!user ? <Auth /> : (
         <>
           <Stack>
-            <Header user={user} />
+            <Header />
             <Nav user={user}/>
           </Stack>
         </>
