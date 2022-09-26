@@ -5,14 +5,14 @@ import {
   Stack,
   Box,
   Typography,
+  Tooltip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField
 } from '@mui/material';
-import TextField from '@mui/material/TextField';
 import Job from './Job'
-import Tooltip from '@mui/material/Tooltip';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
 
 export type JobsProps = {
 
@@ -90,7 +90,6 @@ export default function Jobs(props: JobsProps) {
                 required id="outlined-basic" 
                 label="Job title"
                 variant="outlined" 
-                sx={{ margin: 2 }} 
                 onChange={e => setJobTitle(e.target.value)} 
                 value={jobTitle}
               />
