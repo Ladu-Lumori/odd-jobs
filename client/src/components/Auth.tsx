@@ -1,13 +1,18 @@
 import { useRef, useState } from "react";
 import { supabase } from "../lib/api";
-import { Card, Box, TextField, Button } from '@mui/material';
+import { Card, Box, TextField, Button, Stack, Grid, Tab, Typography, } from '@mui/material';
+import TabContext from '@mui/lab/TabContext';
+import TabList from '@mui/lab/TabList';
+import TabPanel from '@mui/lab/TabPanel';
 
 const Auth = () => {
     const [helperText, setHelperText] = useState({ error: null, text: null });
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [username, setUsername] = useState("");
     const emailRef = useRef();
     const passwordRef = useRef();
+    const usernameRef = useRef();
 
     const handleLogin = async (type) => {
         // const email = emailRef?.current?.value || "";
@@ -17,7 +22,6 @@ const Auth = () => {
             type === "LOGIN"
                 ? await supabase.auth.signIn({ email, password })
                 : await supabase.auth.signUp({ email, password });
-
         if (error) {
             setHelperText({ error: true, text: error.message });
         } else if (!user && !error) {
@@ -57,44 +61,114 @@ const Auth = () => {
         }
     };
 
+    const [value, setValue] = useState('1');
+
+    const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+        setValue(newValue);
+    };
+
     return (
-        <Card>
-            <Box
-                component="form"
-                sx={{
-                    '& > :not(style)': { m: 1, width: '25ch' },
-                }}
-                noValidate
-                autoComplete="off"
-            >
-                <TextField
-                    id="outlined-basic"
-                    label="Email"
-                    variant="outlined"
-                    type={"email"}
-                    name={"email"}
-                    ref={emailRef}
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                />
-                <TextField
-                    id="outlined-basic"
-                    label="Password"
-                    variant="outlined"
-                    type={"password"}
-                    name={"password"}
-                    ref={passwordRef}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                />
-                <Button 
-                    variant="contained"
-                    onClick={() =>
-                        handleLogin("REGISTER").catch(console.error)
-                    }
-                >Login</Button>
-            </Box>
-        </Card>
+        <Stack sx={{ justifyContent:"center", alignItems:"center", mt:5}}>
+            <Typography variant="h4" sx={{alignItems:"center"}}>Odd jobs</Typography>
+        <Grid container sx={{ justifyContent:"center", alignItems:"center", mt:3 }}>
+            <Card sx={{p:4}}>
+            <TabContext value={value}>
+            <TabList onChange={handleChange}  textColor="secondary" indicatorColor="secondary" aria-label="lab API tabs example" variant="fullWidth">
+            <Tab label="Login" value="1"/>
+            <Tab label="Sign up" value="2"/>
+            </TabList>
+            <TabPanel value="1"><Box
+                    component="form"
+                    sx={{
+                        '& > :not(style)': { m: 1, width: '25ch' },
+                    }}
+                    noValidate
+                    autoComplete="off"
+                >
+                <Stack gap={2} direction="column">
+                <Typography>Already a Jobber</Typography>
+                     <TextField
+                        id="outlined-basic"
+                        label="Email"
+                        variant="outlined"
+                        type={"email"}
+                        name={"email"}
+                        ref={emailRef}
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
+                    <TextField
+                        id="outlined-basic"
+                        label="Password"
+                        variant="outlined"
+                        type={"password"}
+                        name={"password"}
+                        ref={passwordRef}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+                    <Button 
+                    sx={{ bgcolor: "#7c6ea7" }}
+                        variant="contained"
+                        onClick={() =>
+                            handleLogin("REGISTER").catch(console.error)
+                        }
+                    >Login</Button>
+                </Stack>
+                </Box></TabPanel>
+                <TabPanel value="2"><Box
+                    component="form"
+                    sx={{
+                        '& > :not(style)': { m: 1, width: '25ch' },
+                    }}
+                    noValidate
+                    autoComplete="off"
+                >
+                <Stack gap={2} direction="column">
+                <Typography>Become a Jobber</Typography>
+                    <TextField
+                        id="outlined-basic"
+                        label="Username"
+                        variant="outlined"
+                        type={"username"}
+                        name={"username"}
+                        ref={usernameRef}
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                    />
+                     <TextField
+                        id="outlined-basic"
+                        label="Email"
+                        variant="outlined"
+                        type={"email"}
+                        name={"email"}
+                        ref={emailRef}
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
+                    <TextField
+                        id="outlined-basic"
+                        label="Password"
+                        variant="outlined"
+                        type={"password"}
+                        name={"password"}
+                        ref={passwordRef}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+                    <Button 
+                    sx={{ bgcolor: "#7c6ea7" }}
+                        variant="contained"
+                        onClick={() =>
+                            handleLogin("REGISTER").catch(console.error)
+                        }
+                    >Sign up</Button>
+                </Stack>
+                </Box></TabPanel>
+            </TabContext>
+            </Card>
+        </Grid>
+        </Stack>
     );
 };
 

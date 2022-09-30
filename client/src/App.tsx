@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "./lib/api";
-import { Button, Stack } from '@mui/material';
+import { Stack } from '@mui/material';
 import Nav from './components/Nav';
 import Header from './components/Header';
 import './index.css';
@@ -30,7 +30,7 @@ export default function App() {
       {!user ? <Auth /> : (
         <>
           <Stack>
-            <Header />
+            <Header/>
             <Nav user={user}/>
           </Stack>
         </>
@@ -38,3 +38,6 @@ export default function App() {
     </>
   );
 }
+
+
+//user={user}

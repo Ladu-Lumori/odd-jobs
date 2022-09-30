@@ -23,7 +23,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 
 
-function Skele() {
+export default function Skele() {
     const [open, setOpen] = React.useState(false);
   
     const handleClickOpen = () => {

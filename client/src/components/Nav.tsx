@@ -2,11 +2,14 @@ import * as React from 'react';
 import {
   Tab,
   Tabs,
+  Tooltip,
+  Stack,
+  Box
 } from '@mui/material';
 import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon';
 //import { InboxIcon, MailIcon  } from '@mui/icons-material';
 import Dash from '../screens/Dash';
-import Jobs from './Jobs';
+import Jobs from '../screens/Jobs';
 import Settings from '../screens/Settings';
 import Lounge from '../screens/Lounge';
 import TabContext from '@mui/lab/TabContext';
@@ -26,7 +29,7 @@ export default function Nav(props){
     setValue(newValue);
   };
 
-  const handleClick = (event: React.SyntheticEvent, newValue: string) => {
+  const handleClick = () => {
     setValue("3");
   }
 
@@ -45,22 +48,21 @@ export default function Nav(props){
   }
 
   return(
-    <React.Fragment>
-      <CssBaseline />
+    <Stack>
     <TabContext value={value}>
-    <HideOnScroll {...props}>
-    <TabList onChange={handleChange} aria-label="lab API tabs example" centered>
+    <TabList onChange={handleChange} textColor="secondary" indicatorColor="secondary" aria-label="lab API tabs example" centered>
       <Tab label="Dashboard" value="1"/>
       <Tab label="Jobs" value="2"/>
       <Tab label="Lounge" value="3"/>
-      <Tab label="Settings" value="4"/>
+      <Tooltip title="You don't have permission to do this" followCursor><Box><Tab label="Settings" value="4" disabled/></Box></Tooltip>
     </TabList>
-    </HideOnScroll>
       <TabPanel value="1"><Dash user={props?.user}/></TabPanel>
-      <TabPanel value="2"><Jobs click={handleClick}/></TabPanel>
+      <TabPanel value="2"><Jobs onClick={handleClick}/></TabPanel>
       <TabPanel value="3"><Lounge/></TabPanel>
       <TabPanel value="4"><Settings/></TabPanel>
     </TabContext>
-    </React.Fragment>
+    </Stack>
   );
 }
+
+// user={props?.user}
