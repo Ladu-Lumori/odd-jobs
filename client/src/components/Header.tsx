@@ -1,17 +1,42 @@
 import * as React from 'react';
-import { 
+import { Button,
   Stack,
+  Grid,
   Box,
+  SwipeableDrawer,
+  List,
+  Divider,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
   AppBar,
   Toolbar,
   IconButton,
   Typography,
-  InputBase
+  InputBase,
+  Badge,
+  MenuItem,
+  Menu,
 } from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import AccountCircle from '@mui/icons-material/AccountCircle';
+import MailIcon from '@mui/icons-material/Mail';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import MoreIcon from '@mui/icons-material/MoreVert';
 import { styled, alpha } from '@mui/material/styles';
+import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon';
+import Nav from './Nav';
 import GrassIcon from '@mui/icons-material/Grass';
+
+function HomeIcon(props) {
+  return (
+    <SvgIcon {...props}>
+      <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+    </SvgIcon>
+  );
+}
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -67,7 +92,6 @@ export default function Header(){
         <Toolbar variant="dense">
           <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }}>
           <GrassIcon color="disabled" fontSize="large"/>
-          <link rel="stylesheet" href="icons8-coin-67.png" />
           </IconButton>
         <Typography variant="h6" color="inherit" component="div" sx={{ flexGrow: 1 }}>
           ODD JOBS
