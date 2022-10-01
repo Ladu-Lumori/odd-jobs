@@ -111,7 +111,7 @@ const Auth = () => {
                     sx={{ bgcolor: "#7c6ea7" }}
                         variant="contained"
                         onClick={() =>
-                            handleLogin("REGISTER").catch(console.error)
+                            handleLogin("LOGIN").catch(console.error)
                         }
                     >Login</Button>
                 </Stack>
