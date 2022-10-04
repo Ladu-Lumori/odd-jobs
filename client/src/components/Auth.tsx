@@ -69,7 +69,10 @@ const Auth = () => {
 
     return (
         <Stack sx={{ justifyContent:"center", alignItems:"center", mt:5}}>
+            <Stack gap={2} direction='row'>
+                <img alt='Omega' src='https://res.cloudinary.com/dmeugs1i4/image/upload/v1664893648/mi/icons8-omega_1_ntvzfv.svg' height={40} />
             <Typography variant="h4" sx={{alignItems:"center"}}>Odd jobs</Typography>
+            </Stack>
         <Grid container sx={{ justifyContent:"center", alignItems:"center", mt:3 }}>
             <Card sx={{p:4}}>
             <TabContext value={value}>
