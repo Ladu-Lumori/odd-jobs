@@ -1,24 +1,18 @@
-import * as React from 'react';
-import { Button,
-  Stack,
-  Grid,
-  Box,
-  SwipeableDrawer,
-  List,
-  Divider,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Tab,
-  Tabs,
+import React, { useEffect, useState, FC, useCallback, } from "react";
+import {
   Typography
 } from '@mui/material';
 
-export default function Settings(){
+export type SettingsProps = {
+  user: any;
+}
+
+const Settings = ({ user }) => {
   return(
     <Typography variant="h2" gutterBottom>
         Settings.
     </Typography>
   );
 }
+
+export default Settings;

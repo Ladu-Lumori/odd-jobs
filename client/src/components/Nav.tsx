@@ -1,23 +1,16 @@
 import * as React from 'react';
 import {
   Tab,
-  Tabs,
-  Tooltip,
-  Stack,
-  Box
+  Stack
 } from '@mui/material';
-import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon';
-//import { InboxIcon, MailIcon  } from '@mui/icons-material';
-import Dash from '../screens/Dash';
+import Dashboard from '../screens/Dashboard';
 import Jobs from '../screens/Jobs';
 import Settings from '../screens/Settings';
 import Lounge from '../screens/Lounge';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
-import CssBaseline from '@mui/material/CssBaseline';
-import useScrollTrigger from '@mui/material/useScrollTrigger';
-import Slide from '@mui/material/Slide';
+import Services from '../screens/Services';
 
 
 
@@ -33,20 +26,6 @@ export default function Nav(props){
     setValue("3");
   }
 
-  function HideOnScroll(props) {
-    const { children} = props;
-    // Note that you normally won't need to set the window ref as useScrollTrigger
-    // will default to window.
-    // This is only being set here because the demo is in an iframe.
-    const trigger = useScrollTrigger();
-  
-    return (
-      <Slide appear={false} direction="down" in={!trigger}>
-        {children}
-      </Slide>
-    );
-  }
-
   return(
     <Stack>
     <TabContext value={value}>
@@ -54,15 +33,15 @@ export default function Nav(props){
       <Tab label="Dashboard" value="1"/>
       <Tab label="Jobs" value="2"/>
       <Tab label="Lounge" value="3"/>
-      <Tooltip title="You don't have permission to do this" followCursor><Box><Tab label="Settings" value="4" disabled/></Box></Tooltip>
+      <Tab label="Services" value="4"/>
+      <Tab label="Settings" value="5"/>
     </TabList>
-      <TabPanel value="1"><Dash user={props?.user}/></TabPanel>
-      <TabPanel value="2"><Jobs onClick={handleClick}/></TabPanel>
-      <TabPanel value="3"><Lounge/></TabPanel>
-      <TabPanel value="4"><Settings/></TabPanel>
+      <TabPanel value="1"><Dashboard user={props?.user}/></TabPanel>
+      <TabPanel value="2"><Jobs onClick={handleClick} user={props?.user}/></TabPanel>
+      <TabPanel value="3"><Lounge user={props?.user}/></TabPanel>
+      <TabPanel value="4"><Services user={props?.user}/></TabPanel>
+      <TabPanel value="5"><Settings user={props?.user}/></TabPanel>
     </TabContext>
     </Stack>
   );
 }
-
-// user={props?.user}

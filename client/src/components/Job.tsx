@@ -8,7 +8,12 @@ import {
   Avatar,
   Typography,
   Box,
-  Tooltip,
+  MenuList,
+  MenuItem,
+  ListItemText,
+  ListItemIcon,
+  Popover,
+  IconButton,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -20,6 +25,7 @@ import {
   Fade,
 } from '@mui/material';
 import Popper, { PopperPlacementType } from '@mui/material/Popper';
+import { MoreHoriz, Delete } from '@mui/icons-material';
 
 import { deepPurple } from '@mui/material/colors';
 
@@ -30,41 +36,32 @@ type JobAttr = {
   amount: number;
   created_at: string;
   updated_at: string;
-  user_id: string;
+  userId: string;
   user: {
-    username: string;
-    avatar: string;
+    username?: string;
+    avatar?: string;
+    name?: string;
   }
 
 }
 
 type JobProps = {
   job: JobAttr;
-  onClick: () => void;
+  onClick?: () => void;
+  user?: any;
 };
 type JobRequest = {
   message: string;
   heading: string;
 };
 
-const Job: FC<JobProps> = (props) => {
-
-
-  const [open, setOpen] = useState(false);
+export const Job: FC<JobProps> = (props) => {
+  console.log(props.job)
   const [request, setRequest] = useState<JobRequest>({
     message: "",
     heading: "",
   });
-
-  const handleClickOpen = () => {
-    setOpen(true);
-   // setChecked((prev) => !prev);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-   // setChecked((prev) => !prev);
-  }
+  const [isDialogOpen, setDialogOpen] = useState(false);
 
   const onChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -76,127 +73,126 @@ const Job: FC<JobProps> = (props) => {
     });
   }, []);
 
-  // const expan = () =>{
-  //   return(
-  //     <Card sx={{ bgcolor: "grey", width: 600, height: 450, position: "flex-start"}}>
-  //       <Stack m={1} gap={4}>
-  //       <Typography variant="h5">
-  //         Details
-  //       </Typography>
-  //       <Typography>
-  //       {props.job.description}
-  //       </Typography>
-  //       </Stack>
-  //     </Card>
-  //   );
-  // }
-  const [opun, setOpun] = useState(false);
-  const [placement, setPlacement] = useState<PopperPlacementType>();
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-  const handleClick =
-    (newPlacement: PopperPlacementType) =>
-      (event: React.MouseEvent<HTMLButtonElement>) => {
-        setAnchorEl(event.currentTarget);
-        setOpun((prev) => placement !== newPlacement || !prev);
-        setPlacement(newPlacement);
-      };
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+  const isPopoverOpen = Boolean(anchorEl);
+  const id = isPopoverOpen ? 'simple-popover' : undefined;
 
-  const canBeOpen = opun && Boolean(anchorEl);
-  const id = canBeOpen ? 'transition-popper' : undefined;
+  const handlePopoverClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
 
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+  };
 
   const sendMessage = async () => {
     let { data: job, error } = await supabase.from("proposals")
       .insert({
         message: request.message,
-        jobId: 6 // use dynamic job id
+        jobId: props.job.id,
+        userId: props.user.id,
       })
       .single();
-   // setChecked((prev) => !prev);
+    // setChecked((prev) => !prev);
   }
 
+  const handleClickOpen = () => {
+    setDialogOpen(true);
+    // setChecked((prev) => !prev);
+  };
+
+  const handleClose = () => {
+    setDialogOpen(false);
+    // setChecked((prev) => !prev);
+  }
+
+  const deleteJob = async () => {
+    try {
+        await supabase.from("jobs").delete().eq("id", props?.job?.id);
+        // setTodos(todos.filter((x) => x.id !== id));
+    } catch (error) {
+        console.log("error", error);
+    }
+};
+
   return (
-    <Stack direction="row" gap={2}>
-      <Stack>
-        <Card sx={{ bgcolor: '#fff8fa', width: 700, }}>
-          <CardContent>
-            <Grid container sx={{ justifyContent: 'space-between' }}>
-              <Stack gap={1} direction="row" sx={{ alignItems: 'center' }}>
-                <Avatar sx={{ bgcolor: deepPurple[250] }}>{props.job.user.avatar}</Avatar>
-                <Typography sx={{}} color="text.secondary">
-                  Username.
-                </Typography>
-              </Stack>
+    <>
+      <Stack direction="row" gap={2}>
+        <Stack>
+          <Card sx={{ bgcolor: '#fff8fa', width: 700, }}>
+            <CardContent>
+              <Grid container sx={{ justifyContent: 'space-between' }}>
+                <Stack gap={1} direction="row" sx={{ alignItems: 'center' }}>
+                  <Avatar sx={{ bgcolor: deepPurple[250] }} alt={props.job?.user?.name}>{props.job?.user?.avatar}</Avatar>
+                  <Typography sx={{}} color="text.secondary">
+                  {props.job?.user?.name}
+                  </Typography>
+                </Stack>
+                <IconButton onClick={handlePopoverClick}>
+                  <MoreHoriz />
+                </IconButton>
+              </Grid>
+              <Divider sx={{ mt: 1, mb: 1 }} />
               <Typography sx={{ position: 'flex-end' }}>
-                ${props.job.amount}
+                {props?.job?.title}
               </Typography>
-            </Grid>
-            <Divider sx={{ mt: 1, mb: 1 }} />
-            <Typography sx={{ position: 'flex-end' }}>
-              {props.job.title}
-            </Typography>
-          </CardContent>
-          <Dialog
-            open={open}
-            onClose={handleClose}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description"
-          >
-            <DialogTitle id="alert-dialog-title">
-              {"Request To Work on Job"}
-            </DialogTitle>
-            <DialogContent>
-              <Stack gap={2}>
-                <TextField
-                  required id="outlined-basic"
-                  label="Message to client"
-                  variant="outlined"
-                  onChange={onChange}
-                  value={request.message}
-                  name="message"
-                />
-              </Stack>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleClose}>Cancel</Button>
-              <Button onClick={sendMessage} autoFocus>
-                Send
-              </Button>
-            </DialogActions>
-          </Dialog>
-          <CardActions>
-            <Button sx={{ bgcolor: "#7c6ea7" }} variant="contained" onClick={handleClickOpen}>Take</Button>
-          </CardActions>
-        </Card>
+            </CardContent>
+            <Dialog
+              open={isDialogOpen}
+              onClose={() => { }}
+              aria-labelledby="alert-dialog-title"
+              aria-describedby="alert-dialog-description"
+            >
+              <DialogTitle id="alert-dialog-title">
+                {"Request To Work on Job"}
+              </DialogTitle>
+              <DialogContent>
+                <Stack gap={2}>
+                  <TextField
+                    required id="outlined-basic"
+                    label="Message to client"
+                    variant="outlined"
+                    onChange={onChange}
+                    value={request.message}
+                    name="message"
+                  />
+                </Stack>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => { }}>Cancel</Button>
+                <Button onClick={sendMessage} autoFocus>
+                  Send
+                </Button>
+              </DialogActions>
+            </Dialog>
+            <CardActions>
+              <Button sx={{ bgcolor: "#7c6ea7" }} variant="contained" onClick={handleClickOpen}>Take</Button>
+            </CardActions>
+          </Card>
+        </Stack>
       </Stack>
-      <Stack>
-        <Popper id={id} open={opun} anchorEl={anchorEl} placement={placement} transition>
-          {({ TransitionProps }) => (
-            <Fade {...TransitionProps} timeout={350}>
-              <Box sx={{ p: 1, bgcolor: 'background.paper' }}>
-                <Card sx={{ bgcolor: "grey", width: 600, position: "flex-start" }}>
-                  <Stack m={1} gap={4}>
-                    <Typography variant="h5">
-                      Details
-                    </Typography>
-                    <Typography>
-                      {props.job.description}
-                    </Typography>
-                  </Stack>
-                </Card>
-              </Box>
-            </Fade>
-          )}
-        </Popper>
-      </Stack>
-      {/* <Stack>
-    <Fade in={checked}>
-      {expan()}
-      </Fade>
-      </Stack> */}
-    </Stack>
+      <Popover
+        id={id}
+        open={isPopoverOpen}
+        anchorEl={anchorEl}
+        onClose={handlePopoverClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+      >
+        <MenuList>
+          {
+            props.user?.id === props.job?.userId ? (<MenuItem onClick={deleteJob}>
+              <ListItemIcon>
+                <Delete fontSize="small" />
+              </ListItemIcon>
+              <ListItemText>Delete Job</ListItemText>
+            </MenuItem>) : null
+          }
+        </MenuList>
+      </Popover>
+    </>
   );
 }
-
-export default Job;

@@ -1,9 +1,10 @@
 import { Typography, Container, Stack, Grid, TextField, Button } from '@mui/material';
-import { useEffect, useState } from "react";
+import React, { FC, useState, useEffect } from 'react';
 // import Messages from "./Messages";
 import { BsChevronDoubleDown } from "react-icons/bs";
+import { supabase } from "../lib/api";
 
-const messages = [
+const dummymessages = [
   {
     id: 1,
     text: "Hello",
@@ -41,13 +42,48 @@ const ChatBubble = ({ message }) => {
       padding: "0.5rem", 
       width: "fit-content" 
     }}>
-      <Typography>{message.text}</Typography>
+      <Typography>{message.chat}</Typography>
     </Stack>
   )
 }
 
-export const Chat = () => {
+export const Chat = ({ proposal }) => {
+  console.log(proposal);
 
+  const [text, setText] = useState<string>("");
+  const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  const sendMessage = async () => {
+    let { data: message, error } = await supabase
+    .from("messages")
+    .insert({
+      chat: text,
+      senderId: proposal.jobs.userId,
+      receiverId: proposal.userId,
+      proposalId: proposal.id,
+    })
+    .single();
+  if (error) {
+    // handle error setError(error.message)
+  } else {
+    setMessages([message, ...messages]);
+    //setError(null);
+    // newTaskTextRef.current.value = "";
+  }
+  }
+
+  const fetchMessages = async () => {
+    let { data: messages, error } = await supabase
+      .from("messages")
+      .select("*, user:userId(*)")
+    if (error) console.log("error", error);
+    else setMessages(messages);
+  };
+
+  useEffect(() => {
+    fetchMessages().catch(console.error);
+  }, []);
 
   return (
     <Container sx={{ bgcolor: "#fff", p:2 }}>
@@ -57,64 +93,19 @@ export const Chat = () => {
       <Stack>
         <Grid sx={{mt:6}} container spacing={4}>
           <Grid item xs={12} md={8}>
-          <TextField id="mess=age" label="Message" fullWidth variant="standard" />
+          <TextField 
+            id="mess=age" 
+            label="Message" 
+            fullWidth 
+            variant="standard"
+            onChange={(e) => setText(e.target.value)}
+          />
           </Grid>
           <Grid item xs={12} md={4}>
-            <Button variant="contained" color="primary">Send</Button>
+            <Button variant="contained" color="primary" onClick={sendMessage}>Send</Button>
           </Grid>
         </Grid>
       </Stack>
     </Container>
   );
 }
-
-/**
- * <Messages />
-        {!isOnBottom && (
-          <div
-            style={{
-              position: "sticky",
-              bottom: 8,
-              // right: 0,
-              float: "right",
-              cursor: "pointer",
-            }}
-            onClick={scrollToBottom}
-          >
-            {unviewedMessageCount > 0 ? (
-              <Badge
-                ml="1"
-                fontSize="0.8em"
-                colorScheme="green"
-                display="flex"
-                borderRadius="7px"
-                padding="3px 5px"
-                alignItems="center"
-              >
-                {unviewedMessageCount}
-                <BsChevronDoubleDown style={{ marginLeft: "3px" }} />
-              </Badge>
-            ) : (
-              <BsChevronDoubleDown style={{ marginLeft: "3px" }} />
-            )}
-          </div>
-        )}
- */
-
-
-/**
- * 
- *   const [height, setHeight] = useState(window.innerHeight - 205);
-  const {
-    scrollRef,
-    onScroll,
-    scrollToBottom,
-    isOnBottom,
-    unviewedMessageCount,
-  } = useAppContext();
-  useEffect(() => {
-    window.addEventListener("resize", () => {
-      setHeight(window.innerHeight - 205);
-    });
-  }, []);
- */

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { FC, useState, useEffect } from 'react';
 import { supabase } from "../lib/api";
 import {
   Stack,
@@ -8,50 +8,136 @@ import {
   CardActions,
   Divider,
   Grid,
-  Avatar,
+  IconButton,
   Button,
-  Badge
+  Badge,
+  Drawer
 } from '@mui/material';
-// import Messo from '../Messo';
-//import Messages from '../components/Messages';
-//import Job from '../components/Job'
 import { Chat } from "../components/Chat";
+import { MoreHoriz, Delete } from '@mui/icons-material';
 
+type Anchor = 'top' | 'left' | 'bottom' | 'right';
 
-const Proposal = ({ proposal }) => {
+const ProposalDetails = ({ acceptProposal, proposal, rejectProposal }) => {
   return (
-    <Card sx={{ bgcolor: '#fff', width: 700, }}>
-      <CardContent>
-        <Grid container sx={{ justifyContent: 'space-between' }}>
-          <Stack gap={1} direction="row" sx={{ alignItems: 'center' }}>
-            <Avatar sx={{ bgcolor: '#7c6ea7' }}></Avatar>
+    <Stack>
+      <Chat proposal={proposal}/>
+    </Stack>
+  )
+}
+
+const ProposalOverview = ({ acceptProposal, proposal, rejectProposal }) => {
+  const [state, setState] = React.useState({
+    right: false,
+  });
+
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+  const isPopoverOpen = Boolean(anchorEl);
+  const id = isPopoverOpen ? 'simple-popover' : undefined;
+
+  const handlePopoverClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+  };
+
+  const toggleDrawer =
+    (anchor: Anchor, open: boolean) =>
+      (event: React.MouseEvent) => {
+        setState({ ...state, [anchor]: open });
+      };
+
+  const handleAccept = () => {
+    toggleDrawer('right', true);
+  }
+
+  return (
+    <>
+      <Card sx={{ bgcolor: '#fff', width: 700, }}>
+        <CardContent>
+          <Grid container sx={{ justifyContent: 'space-between' }}>
             <Typography sx={{}} color="text.secondary">
-              Username.
+              {proposal?.jobs?.title}
             </Typography>
-          </Stack>
-          <Typography sx={{ position: 'flex-end' }}>
-            $ {proposal.jobs.amount}
-          </Typography>
-        </Grid>
-        <Divider sx={{ mt: 1, mb: 1 }} />
-        <Typography>{proposal.jobs.title}</Typography>
-      </CardContent>
-      <CardActions>
-        <Badge badgeContent={1} color="success"><Button sx={{}} onClick={() => { }} size="small" color="success" variant="outlined">Chat</Button></Badge>
-        <Button sx={{ ml: 3 }} onClick={() => { }} size="small" color="error" variant="outlined">Reject</Button>
-      </CardActions>
-    </Card>
+            <IconButton onClick={handlePopoverClick}>
+              <MoreHoriz />
+            </IconButton>
+          </Grid>
+          <Divider sx={{ mt: 1, mb: 1 }} />
+          <Typography>{proposal.message}</Typography>
+
+          <Grid container spacing={4}>
+            <Grid item>
+              <Typography sx={{ position: 'flex-end' }}>
+                $ {proposal.jobs.amount}
+              </Typography>
+            </Grid>
+            <Grid item>
+              <Typography sx={{ position: 'flex-end' }}>
+                By: {proposal.user.name}
+              </Typography>
+            </Grid>
+          </Grid>
+        </CardContent>
+        <CardActions>
+          {(['right'] as const).map((anchor) => (
+            <React.Fragment key={anchor}>
+              <Button onClick={toggleDrawer(anchor, true)} variant="contained">View Proposal</Button>
+              <Drawer
+                anchor={anchor}
+                open={state[anchor]}
+                onClose={toggleDrawer(anchor, false)}
+              >
+                <ProposalDetails
+                  proposal={proposal}
+                  acceptProposal={acceptProposal}
+                  rejectProposal={rejectProposal}
+                />
+              </Drawer>
+            </React.Fragment>
+          ))}
+          <Button sx={{ ml: 3 }} onClick={rejectProposal} size="small" color="error" variant="outlined">Reject</Button>
+        </CardActions>
+      </Card>
+
+    </>
+
 
   );
 }
 
-export default function Lounge() {
+export type LoungeProps = {
+  user: any;
+}
+
+const Lounge: FC<LoungeProps> = ({ user }) => {
   const [proposals, setProposals] = useState([]);
 
   const fetchProposals = async () => {
     let { data: proposals, error } = await supabase
       .from("proposals")
-      .select("*, jobs(*)")
+      .select("*")
+      .order("id", { ascending: false })
+      .neq('userId', `${user.id}`);
+    if (error) console.log("error", error);
+    else setProposals(proposals);
+  };
+
+  const rejectProposal = async () => {
+    let { data: proposals, error } = await supabase
+      .from("proposals")
+      .select("*, jobs(*), user:userId(*)")
+      .order("id", { ascending: false });
+    if (error) console.log("error", error);
+    else setProposals(proposals);
+  };
+
+  const acceptProposal = async () => {
+    let { data: proposals, error } = await supabase
+      .from("proposals")
+      .select("*, jobs(*), user:userId(*)")
       .order("id", { ascending: false });
     if (error) console.log("error", error);
     else setProposals(proposals);
@@ -62,7 +148,7 @@ export default function Lounge() {
   }, []);
   return (
     <Grid container spacing={8}>
-      <Grid item xs={12} md={6}>
+      <Grid item xs={12} md={12}>
         <Stack gap={2}>
           <Stack>
             <Typography variant="h5" gutterBottom>
@@ -73,23 +159,19 @@ export default function Lounge() {
             </Typography>
             <Stack gap={2}>
               {
-                proposals.map((proposal) => <Proposal proposal={proposal} key={proposal.id} />)
+                proposals.map((proposal) => <ProposalOverview
+                  key={proposal.id}
+                  proposal={proposal}
+                  acceptProposal={acceptProposal}
+                  rejectProposal={rejectProposal}
+                />)
               }
             </Stack>
           </Stack>
         </Stack>
       </Grid>
-      <Grid item xs={12} md={6}>
-        <Stack>
-          <Typography variant="h5" gutterBottom>
-            Messages
-          </Typography>
-          <Typography variant="body2" gutterBottom>
-              A project proposal is a document that defines the necessary steps towards solving a particular problem. It presents a logical progression and description
-            </Typography>
-            <Chat />
-        </Stack>
-      </Grid>
     </Grid>
   );
 }
+
+export default Lounge;
